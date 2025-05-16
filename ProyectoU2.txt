@@ -1,0 +1,151 @@
+drop database if exists Proyecto;
+create database Proyecto;
+use Proyecto;
+
+drop table if exists Facturas;
+create table Facturas(
+	idFactura int(11) primary key not null,
+    Monto decimal(10,2),
+    Fecha date
+);
+insert into Facturas(idFactura,Monto,Fecha)
+values
+(1, '50.25', '2025/01/01'),
+(2, '100.50', '2025/02/10'),
+(3, '75.30', '2025/03/15'),
+(4, '200.00', '2025/04/05'),
+(5, '150.75', '2025/05/20');
+
+drop table if exists Proveedores;
+create table Proveedores(
+	idProveedor int(11) primary key not null,
+    Nombre varchar(50),
+    Contacto varchar(50)
+);
+insert into Proveedores(idProveedor,Nombre,Contacto)
+values
+(12, 'Intelaf', 'xxxxxx@gmail.com'),
+(13, 'Dell', 'contacto@dell.com'),
+(14, 'HP', 'contacto@hp.com'),
+(15, 'Lenovo', 'contacto@lenovo.com'),
+(16, 'ASUS', 'contacto@asus.com');
+
+drop table if exists Pagos_Proveedores;
+create table Pagos_Proveedores(
+	idPago int(11) primary key not null,
+    Pagos_idProveedor int(11) not null, foreign key (Pagos_idProveedor) references Proveedores(idProveedor),
+    Monto decimal(10,2),
+    Fecha date,
+    Pagos_idFactura int(11) not null, foreign key (Pagos_idFactura) references Facturas(idFactura)
+);
+insert into Pagos_Proveedores(idPago,Pagos_idProveedor,Monto,Fecha,Pagos_idFactura)
+values
+(123, 12, '50.25', '2025/01/01', 1),
+(124, 13, '100.50', '2025/02/10', 2),
+(125, 14, '75.30', '2025/03/15', 3),
+(126, 15, '200.00', '2025/04/05', 4),
+(127, 16, '150.75', '2025/05/20', 5);
+
+drop table if exists Empresas;
+create table Empresas(
+	idEmpresa int(11) primary key not null,
+    Nombre varchar(50),
+    UsuarioEmpresa varchar(50),
+    ContraEmpresa varchar(50),
+    Empresa_idProveedor int(11), foreign key (Empresa_idProveedor) references Proveedores(idProveedor)
+);
+insert into Empresas(idEmpresa,Nombre,UsuarioEmpresa,ContraEmpresa,Empresa_idProveedor)
+values
+(01, 'Cemaco', 'C10025', 'xxxx', 12),
+(02, 'Walmart', 'Wal2025', 'zzzz', 12),
+(03, 'Best Buy', 'BB2025', 'yyyy', 13),
+(04, 'Amazon', 'Amz2025', 'zzzz', 14),
+(05, 'eBay', 'eBay2025', 'aaaa', 15),
+(06, 'Newegg', 'Newegg25', 'bbbb', 16);
+
+drop table if exists Proyectos;
+create table Proyectos(
+	idProyecto int(11) primary key not null,
+    Nombre varchar(50),
+    Proy_idEmpresa int(11), foreign key (Proy_idEmpresa) references Empresas(idEmpresa),
+    fechaInicio date,
+    fechaFin date
+);
+insert into Proyectos(idProyecto,Nombre,Proy_idEmpresa,fechaInicio,fechaFin)
+values
+(20, 'Implementacion de Energia Renovable' ,'02' ,'2025/02/02', '2025/04/03'),
+(21, 'Migración a la nube', 03, '2025/06/01', '2025/08/15'),
+(22, 'Implementación de CRM', 04, '2025/07/10', '2025/09/30'),
+(23, 'Desarrollo de plataforma e-commerce', 05, '2025/08/01', '2025/11/05'),
+(24, 'Optimización de servidores', 06, '2025/09/20', '2025/12/10');
+
+drop table if exists Amenazas;
+create table Amenazas(
+	idAmenaza int(11) primary key not null,
+    Descripcion text,
+    Amenaza_idEmpresa int(11), foreign key (Amenaza_idEmpresa) references Empresas(idEmpresa),
+    fecha date
+);
+insert into Amenazas(idAmenaza,Descripcion,Amenaza_idEmpresa,fecha)
+values
+(30, 'Amenaza sobre seguridad digital', '01', '2025/12/12'),
+(31, 'Ataque de phishing detectado', 3, '2025/06/05'),
+(32, 'Filtración de datos confidenciales', 4, '2025/07/20'),
+(33, 'Vulnerabilidad en sistema de pagos', 5, '2025/08/10'),
+(34, 'Incidente de acceso no autorizado', 6, '2025/09/25');
+
+drop table if exists Empleados;
+create table Empleados(
+	idEmpleado int(11) primary key not null,
+    Nombre varchar(50),
+    Usuario varchar(50),
+    Contraseña varchar(50),
+    Puesto varchar(50),
+    Salario decimal(10,2),
+    Empleados_idEmpresa int(11), foreign key(Empleados_idEmpresa) references Empresas(idEmpresa)
+);
+insert into Empleados(idEmpleado,Nombre,Usuario,Contraseña,Puesto,Salario,Empleados_idEmpresa)
+values
+(1212, 'Lucas Ruiz', 'LRuiz', 'lruiz2025', 'Personal Administrativo', '5000.00', 01),
+(1213, 'Fernando Ruiz', 'FRuiz', 'fruiz2025', 'Recursos Humanos', '8000.00', 04),
+(1214, 'Javier Ruiz', 'JRuiz', 'Jruiz2025', 'Ingeniero 1', '10000.00', 06),
+(1215, 'Andres Ruiz', 'ARuiz', 'aruiz2025', 'Ingeniero 2', '15000.00', 02),
+(1216, 'Omar Ruiz', 'ORuiz', 'oruiz2025', 'Ingeniero 3', '20000.00', 05);
+
+drop table if exists EmpleadosEmpresas;
+create table EmpleadosEmpresas(
+	EE_idEmpleado int(11), foreign key (EE_idEmpleado) references Empleados(idEmpleado),
+    EE_idEmpresa int(11), foreign key (EE_idEmpresa) references Empresas(idEmpresa)
+);
+insert into EmpleadosEmpresas(EE_idEmpleado,EE_idEmpresa)
+values
+(1212, 01),
+(1213, 03),
+(1214, 04),
+(1215, 05),
+(1216, 06);
+
+select * from Facturas;
+select * from Proveedores;
+select * from Pagos_Proveedores;
+select * from Empresas;
+select * from Proyectos;
+select * from Amenazas;
+select * from Empleados;
+select * from EmpleadosEmpresas;
+-- Empleados en Empresas
+select
+    e.idEmpleado, 
+    e.Nombre as Empleado, 
+    e.Puesto, 
+    em.Nombre as Empresa
+from Empleados e
+inner join Empresas em on e.Empleados_idEmpresa = em.idEmpresa;
+-- Amenazas a Empresas
+select 
+    a.idAmenaza, 
+    a.Descripcion, 
+    em.Nombre as Empresa, 
+    a.fecha
+from Amenazas a
+inner join Empresas em on a.Amenaza_idEmpresa = em.idEmpresa;
